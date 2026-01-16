@@ -1,0 +1,28 @@
+{
+	"manifest_version": 2.0,
+	"id": "ticket-platform-widget",
+	"type": "widget",
+	"name": "Ticket Platform",
+	"namespace": "TicketPlatformWidget",
+	"version": "1.0",
+	"author": "Zabbix",
+	"description": "Shows Ticket Platform problems summary.",
+	"widget": {
+		"form_class": "WidgetForm",
+		"template_support": true,
+		"size": {
+			"width": 24,
+			"height": 6
+		},
+		"js_class": "CWidgetTicketPlatform",
+		"refresh_rate": 60
+	},
+	"actions": {
+		"widget.ticket-platform-widget.view": {
+			"class": "WidgetView"
+		}
+	},
+	"assets": {
+		"js": ["class.widget.js"]
+	}
+}
