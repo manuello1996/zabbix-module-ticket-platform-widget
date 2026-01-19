@@ -49,5 +49,14 @@ class CWidgetTicketPlatform extends CWidget {
 				});
 			};
 		}
+
+		if (typeof window.ticketPlatformRemoteItemPopUp !== 'function') {
+			window.ticketPlatformRemoteItemPopUp = function (itemid, serverid, trigger_element) {
+				return PopUp('ticket.platform.item.popup', {itemid: itemid, server_id: serverid}, {
+					dialogue_class: 'modal-popup-large',
+					trigger_element: trigger_element
+				});
+			};
+		}
 	}
 }

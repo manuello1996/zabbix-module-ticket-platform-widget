@@ -80,6 +80,20 @@ class WidgetView extends CControllerDashboardWidgetView {
 			'show_tags' => $normalized_filter['show_tags']
 		];
 
+		$sort = $this->getInput('sort', 'clock');
+		$sortorder = $this->getInput('sortorder', ZBX_SORT_DOWN);
+		$page = (int) $this->getInput('page', 1);
+
+		if (!in_array($sort, ['clock', 'severity', 'name', 'host', 'server'], true)) {
+			$sort = 'clock';
+		}
+		if (!in_array($sortorder, [ZBX_SORT_UP, ZBX_SORT_DOWN], true)) {
+			$sortorder = ZBX_SORT_DOWN;
+		}
+		if ($page < 1) {
+			$page = 1;
+		}
+
 		try {
 			[$problems, $errors] = ProblemHelper::fetchProblems($servers, $filter, (int) $config['cache_ttl']);
 		}
@@ -92,9 +106,25 @@ class WidgetView extends CControllerDashboardWidgetView {
 			return;
 		}
 
-		usort($problems, function ($a, $b) {
-			return $b['clock'] <=> $a['clock'];
-		});
+		$view_filter = [
+			'show' => $this->fields_values['show'],
+			'server_ids' => $this->fields_values['server_ids'],
+			'name' => $this->fields_values['name'],
+			'host' => $this->fields_values['host'],
+			'severities' => $this->fields_values['severities'],
+			'age_state' => $this->fields_values['age_state'],
+			'age' => $this->fields_values['age'],
+			'acknowledgement_status' => $this->fields_values['acknowledgement_status'],
+			'show_suppressed' => $this->fields_values['show_suppressed'],
+			'evaltype' => $this->fields_values['evaltype'],
+			'tags' => $normalized_filter['tags'],
+			'show_tags' => $this->fields_values['show_tags'],
+			'tag_name_format' => $this->fields_values['tag_name_format'],
+			'time_period' => $this->fields_values['time_period'],
+			'sort' => $sort,
+			'sortorder' => $sortorder,
+			'page' => $page
+		];
 
 		$this->setResponse(new CControllerResponseData([
 			'name' => $this->getInput('name', $this->widget->getDefaultName()),
@@ -102,6 +132,7 @@ class WidgetView extends CControllerDashboardWidgetView {
 				return $error['server'].': '.$error['error'];
 			}, $errors),
 			'problems' => $problems,
+			'filter' => $view_filter,
 			'fields' => [
 				'show' => $this->fields_values['show'],
 				'show_tags' => $this->fields_values['show_tags'],
